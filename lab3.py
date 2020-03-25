@@ -1,4 +1,5 @@
 import numpy as np
+from scipy.stats import f
 import scipy.stats
 
 x1min = -5
@@ -133,9 +134,21 @@ Gp = max(S2)/sum(S2)
 m = len(y_list[0])
 f1 = m-1
 f2 = N = len(x_matrix)
-q = 0.05
-# для q = 0.05, f1 = 2, f2 = 4, Gt = 0.7679
-Gt = 0.7679
+
+q = float(input("Введіть рівень значимості: "))
+p = 1 - q
+
+
+def tab_f(prob, d, f3):
+    x_vec = [i*0.001 for i in range(int(10/0.001))]
+    for i in x_vec:
+        if abs(f.cdf(i, 4-d, f3)-prob) < 0.0001:
+            return i
+
+
+k = tab_f(p, 1, f1 * 4)
+Gt = k / (k + f1 - 2)
+
 
 if Gp < Gt:
     print("Дисперсія однорідна")
@@ -205,6 +218,6 @@ Ft = scipy.stats.f.ppf(1-q, f4, f3)
 print("Fp:", Fp)
 print("Ft:", Ft)
 if Fp > Ft:
-    print("Рівняння регресії не адекватно оригіналу при рівні значимості 0,05")
+    print("Рівняння регресії не адекватно оригіналу при рівні значимості ", q)
 else:
-    print("Рівняння регресії адекватно оригіналу при рівні значимості 0,05")
+    print("Рівняння регресії адекватно оригіналу при рівні значимості ", q)
